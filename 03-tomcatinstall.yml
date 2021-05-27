@@ -1,0 +1,40 @@
+---
+- name: Tomcat installation
+  hosts: all
+  become: true
+
+  tasks:
+   - name: Install Java-openjdk
+     package:
+       name:  java-1.8.0-openjdk
+       state: latest
+
+   - name: Download Tomcat
+     get_url:
+       url: https://archive.apache.org/dist/tomcat/tomcat-7/v7.0.94/bin/apache-tomcat-7.0.94.tar.gz
+       dest: /home/centos
+
+   - name: Extract tomcat packages
+     unarchive:
+        src: /home/centos/apache-tomcat-7.0.94.tar.gz  
+        dest: /home/centos/
+        remote_src: yes
+
+   - name: add group "tomcat"
+     group: 
+        name: tomcat
+        state: present
+
+   - name: add user "tomcat"
+     user: 
+        name: tomcat 
+        group: tomcat 
+        home: /home/centos/tomcat
+        createhome: no
+    
+   - name : Start Tomcat
+     shell: nohup /home/centos/apache-tomcat-7.0.94/bin/startup.sh  
+     become: true
+     
+
+...
